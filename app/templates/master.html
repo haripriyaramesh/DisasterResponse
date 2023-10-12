@@ -70,6 +70,7 @@
     const graphs = {{ graphJSON | safe }};
     const ids = {{ ids | safe }};
     for (let i in graphs) {
+        graphs[i].layout.width = 1140;
         Plotly.newPlot(ids[i], graphs[i].data, graphs[i].layout);
     }
 
