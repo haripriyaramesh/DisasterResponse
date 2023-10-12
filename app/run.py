@@ -38,10 +38,17 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/index')
 def index():
     
+    print('in Index function')
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
+
+        # To display the category distribution
+
+    category_counts = df.sum().drop(['id', 'message', 'genre'], inplace = False)
+    category_names = category_counts.index.tolist()
+    category_values = category_counts.astype(int).tolist()
     
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -63,16 +70,50 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+
+        {
+            'data': [
+                Bar(
+                    x=category_names,
+                    y=category_values
+                )
+            ],
+            'layout': {
+                'title': 'Distribution of Message Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
         }
+
     ]
     
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+
+
+    # category_values = category_counts.tolist()
     
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
 
+'''
+# To display the category distribution
+# @app.route('/category_distribution')
+@app.route('/')
+@app.route('/index')
+def category_distribution():
+    category_counts = df.sum().drop(['message', 'genre'], inplace = False)
+    category_names = category_counts.index.tolist()
+    category_values = category_counts.tolist()
+
+    return render_template('category_distribution.html', category_names=category_names, category_values=category_values)
+'''
 
 # web page that handles user query and displays model results
 @app.route('/go')
@@ -90,6 +131,7 @@ def go():
         query=query,
         classification_result=classification_results
     )
+
 
 
 def main():

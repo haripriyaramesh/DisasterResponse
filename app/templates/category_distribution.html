@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Category Distribution</title>
+</head>
+<body>
+    <div id="category-distribution"></div>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var category_names = {{ category_names | tojson | safe }};
+        var category_values = {{ category_values | tojson | safe }};
+
+        var data = [{
+            x: category_names,
+            y: category_values,
+            type: 'bar'
+        }];
+
+        var layout = {
+            title: 'Category Distribution',
+            xaxis: {
+                title: 'Categories'
+            },
+            yaxis: {
+                title: 'Count'
+            }
+        };
+
+        Plotly.newPlot('category-distribution', data, layout);
+    </script>
+</body>
+</html>
