@@ -15,10 +15,18 @@ from sklearn.externals import joblib
 import plotly.express as px
 from sqlalchemy import create_engine
 
-
 app = Flask(__name__)
 
 def tokenize(text):
+    """
+    Tokenize a text string by breaking it into individual words and performing lemmatization.
+
+    Args:
+        text (str): The input text to tokenize.
+
+    Returns:
+        list: A list of cleaned and lemmatized tokens.
+    """
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -29,35 +37,37 @@ def tokenize(text):
 
     return clean_tokens
 
-# load data
+# Load data
 engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('MessageCategories', engine)
 
-# load model
+# Load model
 model = joblib.load("../models/classifier.pkl")
 
-
-# index webpage displays cool visuals and receives user input text for model
+# Index webpage displays cool visuals and receives user input text for model
 @app.route('/')
 @app.route('/index')
 def index():
-    
+    """
+    Render the index page with data visualizations.
+
+    Returns:
+        str: The rendered HTML page with visualizations.
+    """
     show_buttons = True
 
-    print('in Index function')
-    # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
+    # Extract data needed for visuals
+
+    # Calculate genre counts
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
-        # To display the category distribution
-
-    category_counts = df.sum().drop(['id', 'message', 'genre'], inplace = False)
+    # To display the category distribution
+    category_counts = df.sum().drop(['id', 'message', 'genre'], inplace=False)
     category_names = category_counts.index.tolist()
     category_values = category_counts.astype(int).tolist()
 
-    #Category corr heatmap
-
+    # Category correlation heatmap
     category_frequencies = category_counts.sort_values(ascending=False)
 
     # Select the top 10 most frequent categories
@@ -69,22 +79,13 @@ def index():
     # Calculate the correlation matrix
     correlation_matrix = subset_df.corr()
 
-    # Create a correlation heatmap using Plotly
+    # Create a correlation heatmap
     trace = gro.Heatmap(z=correlation_matrix.values,
-                    x=top_10_categories,
-                    y=top_10_categories,
-                    colorscale='Viridis')
+                        x=top_10_categories,
+                        y=top_10_categories,
+                        colorscale='Viridis')
 
-    layout = gro.Layout(title="Correlation Heatmap of Top 10 Categories")
-
-    fig = gro.Figure(data=[trace], layout=layout)
-
-    # Serialize the figure as a JSON string
-    figure_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    
-
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    # Create visuals
     graphs = [
         {
             'data': [
@@ -97,7 +98,6 @@ def index():
                 'title': 'Distribution of Message Genres'
             }
         },
-
         {
             'data': [
                 Bar(
@@ -116,37 +116,37 @@ def index():
             }
         },
         {
-            'data': [trace],  # Include the heatmap trace here
+            'data': [trace],
             'layout': {
                 'title': "Correlation Heatmap of Top 10 Categories"
             }
         }
-
     ]
-    
-    # encode plotly graphs in JSON
+
+    # Encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
 
-
-    # category_values = category_counts.tolist()
-    
-    # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON, show_buttons=show_buttons)
 
-# web page that handles user query and displays model results
+# Web page that handles user query and displays model results
 @app.route('/go')
 def go():
+    """
+    Render the 'go' page with query results.
 
+    Returns:
+        str: The rendered HTML page with query results.
+    """
     show_buttons = False
-    # save user input in query
-    query = request.args.get('query', '') 
+    # Save user input in query
+    query = request.args.get('query', '')
 
-    # use model to predict classification for query
+    # Use the model to predict classification for the query
     classification_labels = model.predict([query])[0]
     classification_results = dict(zip(df.columns[4:], classification_labels))
 
-    # This will render the go.html Please see that file. 
+    # Render the 'go.html' page with classification results
     return render_template(
         'go.html',
         query=query,
@@ -154,11 +154,8 @@ def go():
         show_buttons=show_buttons
     )
 
-
-
 def main():
     app.run(host='0.0.0.0', port=3001, debug=True)
-
 
 if __name__ == '__main__':
     main()
