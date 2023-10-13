@@ -13,6 +13,7 @@
         integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 </head>
 
 <body>
@@ -25,7 +26,7 @@
             <div id="navbar" class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="https://www.udacity.com/">Made with Udacity</a></li>
-                    <li><a href="https://github.com/">Contact</a></li>
+                    <li><a href="https://github.com/haripriyaramesh/">Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -55,7 +56,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container text-center">
         {% block content %}
         <div class="page-header">
             <h1 class="text-center">Overview of Training Dataset</h1>
@@ -63,8 +64,10 @@
         {% endblock %}
 
         {% if show_buttons %}
-        <button id="showGraph1" class="btn btn-primary">Show Genre Distribution</button>
-        <button id="showGraph2" class="btn btn-primary">Show Category Distribution</button>
+        <button id="showGraph1" class="btn btn-primary" style="margin-right: 20px;">Show Genre Distribution</button>
+        <button id="showGraph2" class="btn btn-primary" style="margin-right: 20px;">Show Category Distribution</button>
+        <button id="showGraph3" class="btn btn-primary">Show Category Correlation</button>
+
         {% endif %}
 
         {% for id in ids %}
@@ -84,11 +87,22 @@
         $("#showGraph1").click(function () {
             $("#graph-0").show();
             $("#graph-1").hide();
+            $("#graph-2").hide();
+
         });
 
         $("#showGraph2").click(function () {
             $("#graph-0").hide();
             $("#graph-1").show();
+            $("#graph-2").hide();
+
+        });
+
+        $("#showGraph3").click(function () {
+            $("#graph-0").hide();
+            $("#graph-1").hide();
+            $("#graph-2").show();
+
         });
     </script>
 

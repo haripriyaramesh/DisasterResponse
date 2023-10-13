@@ -9,7 +9,10 @@ from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
 from plotly.graph_objs import Pie
+import plotly.graph_objs as gro
+import plotly.figure_factory as ff
 from sklearn.externals import joblib
+import plotly.express as px
 from sqlalchemy import create_engine
 
 
@@ -52,7 +55,34 @@ def index():
     category_counts = df.sum().drop(['id', 'message', 'genre'], inplace = False)
     category_names = category_counts.index.tolist()
     category_values = category_counts.astype(int).tolist()
+
+    #Category corr heatmap
+
+    category_frequencies = category_counts.sort_values(ascending=False)
+
+    # Select the top 10 most frequent categories
+    top_10_categories = category_frequencies.head(10).index
+
+    # Create a subset of the DataFrame with the selected columns
+    subset_df = df[top_10_categories]
+
+    # Calculate the correlation matrix
+    correlation_matrix = subset_df.corr()
+
+    # Create a correlation heatmap using Plotly
+    trace = gro.Heatmap(z=correlation_matrix.values,
+                    x=top_10_categories,
+                    y=top_10_categories,
+                    colorscale='Viridis')
+
+    layout = gro.Layout(title="Correlation Heatmap of Top 10 Categories")
+
+    fig = gro.Figure(data=[trace], layout=layout)
+
+    # Serialize the figure as a JSON string
+    figure_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
+
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -83,6 +113,12 @@ def index():
                 'xaxis': {
                     'title': "Category"
                 }
+            }
+        },
+        {
+            'data': [trace],  # Include the heatmap trace here
+            'layout': {
+                'title': "Correlation Heatmap of Top 10 Categories"
             }
         }
 
