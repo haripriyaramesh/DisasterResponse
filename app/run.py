@@ -8,6 +8,7 @@ from nltk.tokenize import word_tokenize
 from flask import Flask
 from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar
+from plotly.graph_objs import Pie
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
@@ -38,6 +39,8 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/index')
 def index():
     
+    show_buttons = True
+
     print('in Index function')
     # extract data needed for visuals
     # TODO: Below is an example - modify to extract data for your own visuals
@@ -55,20 +58,13 @@ def index():
     graphs = [
         {
             'data': [
-                Bar(
-                    x=genre_names,
-                    y=genre_counts
+                Pie(
+                    labels=genre_names,
+                    values=genre_counts
                 )
             ],
-
             'layout': {
-                'title': 'Distribution of Message Genres',
-                'yaxis': {
-                    'title': "Count"
-                },
-                'xaxis': {
-                    'title': "Genre"
-                }
+                'title': 'Distribution of Message Genres'
             }
         },
 
@@ -100,24 +96,13 @@ def index():
     # category_values = category_counts.tolist()
     
     # render web page with plotly graphs
-    return render_template('master.html', ids=ids, graphJSON=graphJSON)
-
-'''
-# To display the category distribution
-# @app.route('/category_distribution')
-@app.route('/')
-@app.route('/index')
-def category_distribution():
-    category_counts = df.sum().drop(['message', 'genre'], inplace = False)
-    category_names = category_counts.index.tolist()
-    category_values = category_counts.tolist()
-
-    return render_template('category_distribution.html', category_names=category_names, category_values=category_values)
-'''
+    return render_template('master.html', ids=ids, graphJSON=graphJSON, show_buttons=show_buttons)
 
 # web page that handles user query and displays model results
 @app.route('/go')
 def go():
+
+    show_buttons = False
     # save user input in query
     query = request.args.get('query', '') 
 
@@ -129,7 +114,8 @@ def go():
     return render_template(
         'go.html',
         query=query,
-        classification_result=classification_results
+        classification_result=classification_results,
+        show_buttons=show_buttons
     )
 
 
