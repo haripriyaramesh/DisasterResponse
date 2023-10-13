@@ -90,10 +90,19 @@ def build_model():
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
 
+    #To help with run times, the below code for Gridsearch params have been commented and 
+    # the best estimators post gridsearch have been listed in parameters
+
+    # parameters = {
+    #     'clf__estimator__n_estimators': [50, 100],
+    #     'clf__estimator__max_depth': [None, 10]
+    # }
+
     parameters = {
-        'clf__estimator__n_estimators': [50, 100],
-        'clf__estimator__max_depth': [None, 10]
+        'clf__estimator__n_estimators': [100], 
+        'clf__estimator__max_depth': [None]
     }
+
 
     cv = GridSearchCV(pipeline, param_grid=parameters)
 

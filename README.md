@@ -7,6 +7,7 @@
 - [Dependencies](#dependencies)
 - [Technical Details](#technical-details)
 - [Screenshots](#screenshots)
+- [Acknowledgements](#acknowledgements)
 - [Licensing](#licensing)
 
 ## Description
@@ -54,6 +55,7 @@ To run the Disaster Response Web App, follow these steps:
    -  `python run.py`
    - Access the web app via your web browser.
    - Go to http://0.0.0.0:3001/
+   - Note that in some instances it can take upto 30 seconds for the webpage to load.
    
 4. Web App:
    - Input a message in the main page and click "Classify Message" to see the classification results.
@@ -93,16 +95,32 @@ The project relies on the following dependencies:
     - The pipeline was used to train and assess a basic RandomForestClassifier.
     - Hyperparameter optimization with 3-fold cross-validation was performed using GridSearchCV to identify the most effective model for classifying disaster response into categories.
     - The best parameters for the pipeline were determined as {'clf__estimator__max_depth': None, 'clf__estimator__n_estimators': 100}
+    - We can see from below screenshot of Category distribution that some categoris have fewer training samples. When dealing with imbalanced classes characterized by fewer samples, the model's ability to generalize effectively becomes compromised. This can be reflected in the results of the model. 
 - Refer results folder for category wise F1, Precision and Recall.
 
 
 ## Screenshots
 ![Screenshot 1](screenshots/Homepage.png)
+*Homepage*
+
 ![Screenshot 2](screenshots/genredist.png)
-![Screenshot 2](screenshots/categorydist.png)
-![Screenshot 2](screenshots/categorycorr.png)
-![Screenshot 2](screenshots/query.png)
-![Screenshot 2](screenshots/results.png)
+*Genre Distribution*
+
+![Screenshot 3](screenshots/categorydist.png)
+*Category Distribution*
+
+![Screenshot 4](screenshots/categorycorr.png)
+*Category Correlation*
+
+![Screenshot 5](screenshots/query.png)
+*Query*
+
+![Screenshot 6](screenshots/results.png)
+*Classification Results*
+
+## Acknowledgements
+- The project uses data provided by [Figure Eight](https://www.figure-eight.com/).
+- Thanks to Udacity Datascientist Nanodegree course work, from which some snippets of code/ technique and inspiration for techniques used have been used in this project.
 
 ## Licensing
 This project is licensed under the terms of the MIT license.
