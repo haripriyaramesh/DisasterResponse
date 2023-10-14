@@ -53,6 +53,12 @@ def clean_data(df):
     # Drop duplicates
     df = df.drop_duplicates()
 
+    # Create a condition that checks if the specified columns have only 0 or 1 values
+    condition = (df[category_colnames] == 0) | (df[category_colnames] == 1)
+
+    # Use the condition to filter and keep rows
+    df = df[condition.all(axis=1)]
+
     return df
 
 def save_data(df, database_filename):
@@ -65,7 +71,7 @@ def save_data(df, database_filename):
     """
     db_path = 'sqlite:///' + database_filename
     engine = create_engine(db_path)
-    df.to_sql('MessageCategories', engine, index=False)  
+    df.to_sql('MessageCategories', engine, index=False,  if_exists='replace')  
 
 def main():
     if len(sys.argv) == 4:
